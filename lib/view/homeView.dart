@@ -25,8 +25,7 @@ IconModels iconModels = IconModels();
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation _colorTween;
-  var indexx;
-  var b;
+
   @override
   void initState() {
     _animationController =
@@ -60,6 +59,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       i++;
     }while(i<=populerMovieModel.results!.length);
   }
+
 
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
@@ -128,15 +128,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       itemCount: snapshot.data.results.length,
                                       itemBuilder: (BuildContext context, index) {
                                         PopulerMovieModel project = snapshot.data;
-                                        print(project.results![index].title.toString());
-                                        return Container(
-                                          padding: EdgeInsets.only(right: 10.0),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            child: Image.network("https://image.tmdb.org/t/p/original/${project.results![index].posterPath}",fit: BoxFit.fill),
 
-                                          ),
-                                        );
+                                        print(project.results!.length);
+
+
+                                          return Container(
+                                            padding: EdgeInsets.only(right: 10.0),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              child: Image.network("https://image.tmdb.org/t/p/original/${project.results![index].posterPath}",fit: BoxFit.fill),
+
+                                            ),
+
+                                          );
+
+
 
 
                                       }),
@@ -149,57 +155,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             return const CircularProgressIndicator();
                           },
                         ),
-
-                        FutureBuilder<PopulerMovieModel>(
-                          future: fetchPopulerMoviesData(),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData) {
-                              return Container(
-                                height: height*0.3,
-                                child: ListView.builder(
-                                  //physics: NeverScrollableScrollPhysics(),
-                                  //shrinkWrap: true,
-                                    padding: EdgeInsets.zero,
-
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: snapshot.data.results.length,
-                                    itemBuilder: (BuildContext context, index) {
-                                      PopulerMovieModel project =
-                                          snapshot.data;
-
-                                      for(int i=0 ; i<project.results![index].genreIds!.length;i++){
-                                        if(project.results![index].genreIds![i]==globalGenresData.genres![0].id){
-                                          //print("aynı");
-                                          //print(project.results![index].genreIds![i]);
-                                          //print(globalGenresData.genres![0].id);
-                                          //print("aynı");
-                                           b=project.results![index].genreIds![i];
-                                           indexx=index;
-
-                                        }
-                                      }
-
-                                      return Container(
-                                        padding: EdgeInsets.only(right: 10.0),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          child:globalGenresData.genres![0].id==b ? Image.network("https://image.tmdb.org/t/p/original/${project.results![indexx].posterPath}",fit: BoxFit.fill):Text("a"),
-
-                                        ),
-                                      );
+                        ElevatedButton(onPressed: (){}, child: Text("a")),
 
 
-                                    }),
-                              );
-
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-
-                            return const CircularProgressIndicator();
-                          },
-                        ),
 
 
 
