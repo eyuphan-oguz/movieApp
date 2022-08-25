@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:movie/components/appBarComponents.dart';
 import 'package:movie/model/genresModel.dart';
@@ -11,6 +10,7 @@ import 'package:movie/utils/assetsUtils/svgUtils/svgModels.dart';
 import 'package:movie/viewModel/getGenresData.dart';
 import 'package:movie/viewModel/getPopulerMovieData.dart';
 import 'package:movie/widgets/customRowIconsWidget.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }while(i<=populerMovieModel.results!.length);
   }
 
+  YoutubePlayerController _youtubePlayerController=YoutubePlayerController(initialVideoId: "ZMj_1QEDimQ",flags: YoutubePlayerFlags(autoPlay: true,mute: false));
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   IconModels iconModels=IconModels();
@@ -118,9 +119,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         SingleChildScrollView(
                           child: FutureBuilder<PopulerMovieModel>(
                             future: fetchPopulerMoviesData(pageCount: pageIndex),
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
+                            builder: (BuildContext context, AsyncSnapshot snapshot) {
+
+
+                                  if (snapshot.hasData) {
                                 return Row(
                                   children: [
                                     Expanded(
@@ -133,13 +135,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                               itemCount: snapshot.data.results.length,
                                               itemBuilder: (BuildContext context, index)=>
                                                 index < snapshot.data.results.length-1?
-                                                   Container(
-                                                    padding: EdgeInsets.only(right: 10.0),
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
-                                                    ),
-                                                  ):TextButton.icon(onPressed: (){
+                                                   GestureDetector(
+                                                     onTap: () {
+                                                       showModalBottomSheet<void>(
+                                                         isScrollControlled: true,
+                                                         context: context,
+                                                         builder: (BuildContext context) {
+                                                           return Container(
+                                                             height: height*0.85,
+                                                             color: Colors.amber,
+                                                             child: Center(
+                                                               child:
+                                                                   Expanded(child: YoutubePlayer(controller: _youtubePlayerController,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,))
+
+
+                                                             ),
+                                                           );
+                                                         },
+                                                       );
+                                                     },
+                                                     child: Container(
+                                                      padding: EdgeInsets.only(right: 10.0),
+                                                      child: ClipRRect(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                        child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
+                                                      ),
+                                                  ),
+                                                   ):TextButton.icon(onPressed: (){
                                                     setState((){
                                                       pageIndex++;
                                                       print(pageIndex);
@@ -157,7 +179,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 return Text('${snapshot.error}');
                               }
 
-                              return const CircularProgressIndicator();
+                              return CircularProgressIndicator();
                             },
                           ),
                         ),
