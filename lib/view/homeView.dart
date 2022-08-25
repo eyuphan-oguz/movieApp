@@ -115,47 +115,47 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         CustomRowIconsWidget(iconModels: iconModels, iconText: iconText, iconTextColor: iconTextColor),
 
 
-                        FutureBuilder<PopulerMovieModel>(
-                          future: fetchPopulerMoviesData(pageCount: 5),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData) {
-                              return Container(
-                                height: height*0.3,
-                                child: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.horizontal,
-                                      itemCount: snapshot.data.results.length,
-                                      itemBuilder: (BuildContext context, index) {
-                                        PopulerMovieModel project = snapshot.data;
+                        SingleChildScrollView(
+                          child: FutureBuilder<PopulerMovieModel>(
+                            future: fetchPopulerMoviesData(pageCount: 5),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: height*0.3,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.horizontal,
+                                              itemCount: snapshot.data.results.length,
+                                              itemBuilder: (BuildContext context, index) {
+                                                PopulerMovieModel project = snapshot.data;
+                                                print(project.results!.length);
+                                                  return Container(
+                                                    padding: EdgeInsets.only(right: 10.0),
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      child: Image.network("https://image.tmdb.org/t/p/original/${project.results![index].posterPath}",fit: BoxFit.fill),
+                                                    ),
+                                                  );
+                                              }),
+                                      ),
+                                    ),
 
-                                        print(project.results!.length);
+                                  ],
+                                );
 
+                              } else if (snapshot.hasError) {
+                                return Text('${snapshot.error}');
+                              }
 
-                                          return Container(
-                                            padding: EdgeInsets.only(right: 10.0),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                              child: Image.network("https://image.tmdb.org/t/p/original/${project.results![index].posterPath}",fit: BoxFit.fill),
-
-                                            ),
-
-                                          );
-
-
-
-
-                                      }),
-                              );
-
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-
-                            return const CircularProgressIndicator();
-                          },
+                              return const CircularProgressIndicator();
+                            },
+                          ),
                         ),
-                        ElevatedButton(onPressed: (){}, child: Text("a")),
 
 
 
