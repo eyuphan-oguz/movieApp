@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:movie/components/appBarComponents.dart';
+import 'package:movie/model/genresModel.dart';
 import 'package:movie/model/populerMovieModel.dart';
 import 'package:movie/utils/IconUtils/iconTextColor.dart';
 import 'package:movie/utils/IconUtils/icons.dart';
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             begin: Colors.transparent, end: Colors.black.withOpacity(0.8))
         .animate(_animationController);
     fetchGenresData();
+    fetchPopulerMoviesData();
     super.initState();
   }
 
@@ -45,6 +47,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
     return scroll;
   }
+
+  comediMovieList(PopulerMovieModel populerMovieModel,GenresModel genresModel){
+    int i=0;
+
+    do{
+      for(int j=0 ; j<populerMovieModel.results![i].genreIds!.length; j++){
+        if(populerMovieModel.results![i].genreIds![j]==genresModel.genres![0].id){
+          print(populerMovieModel.results![i].title);
+        }
+      }
+      i++;
+    }while(i<=populerMovieModel.results!.length);
+  }
+
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   IconModels iconModels=IconModels();
@@ -100,23 +116,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 
                         FutureBuilder<PopulerMovieModel>(
-                          future: fetchPopulerMoviesData(),
+                          future: fetchPopulerMoviesData(pageCount: 5),
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.hasData) {
                               return Container(
                                 height: height*0.3,
                                 child: ListView.builder(
-                                      //physics: NeverScrollableScrollPhysics(),
-                                      //shrinkWrap: true,
                                     padding: EdgeInsets.zero,
-
                                     scrollDirection: Axis.horizontal,
                                       itemCount: snapshot.data.results.length,
                                       itemBuilder: (BuildContext context, index) {
-                                        PopulerMovieModel project =
-                                            snapshot.data;
-
+                                        PopulerMovieModel project = snapshot.data;
+                                        print(project.results![index].title.toString());
                                         return Container(
                                           padding: EdgeInsets.only(right: 10.0),
                                           child: ClipRRect(
@@ -137,6 +149,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             return const CircularProgressIndicator();
                           },
                         ),
+
                         FutureBuilder<PopulerMovieModel>(
                           future: fetchPopulerMoviesData(),
                           builder:
@@ -155,7 +168,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       PopulerMovieModel project =
                                           snapshot.data;
 
-
                                       for(int i=0 ; i<project.results![index].genreIds!.length;i++){
                                         if(project.results![index].genreIds![i]==globalGenresData.genres![0].id){
                                           //print("aynı");
@@ -167,7 +179,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                                         }
                                       }
-
 
                                       return Container(
                                         padding: EdgeInsets.only(right: 10.0),
@@ -191,19 +202,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
 
 
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          width: MediaQuery.of(context).size.width * 0.27,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          width: MediaQuery.of(context).size.width * 0.27,
-                          color: Colors.red,
-                        ),
+
                       ],
                     )
                   ],

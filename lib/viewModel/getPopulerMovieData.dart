@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:movie/model/populerMovieModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<PopulerMovieModel> fetchPopulerMoviesData() async {
+Future<PopulerMovieModel> fetchPopulerMoviesData({ int pageCount=1}) async {
 
   final response = await http
-      .get(Uri.parse('https://api.themoviedb.org/3/movie/popular?api_key=${dotenv.env['API_KEY']}&language=en-US&page=1'));
+      .get(Uri.parse('https://api.themoviedb.org/3/movie/popular?api_key=${dotenv.env['API_KEY']}&language=en-US&page=${pageCount}'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
