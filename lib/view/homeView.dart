@@ -8,6 +8,7 @@ import 'package:movie/utils/IconUtils/icons.dart';
 import 'package:movie/utils/IconUtils/iconsText.dart';
 import 'package:movie/utils/assetsUtils/svgUtils/svgModels.dart';
 import 'package:movie/viewModel/getGenresData.dart';
+import 'package:movie/viewModel/getMovieTrailerData.dart';
 import 'package:movie/viewModel/getPopulerMovieData.dart';
 import 'package:movie/widgets/customRowIconsWidget.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -61,13 +62,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }while(i<=populerMovieModel.results!.length);
   }
 
-  YoutubePlayerController _youtubePlayerController=YoutubePlayerController(initialVideoId: "ZMj_1QEDimQ",flags: YoutubePlayerFlags(autoPlay: true,mute: false));
+  getTrailerVideo(int index){
+    fetchMoviesTrailerData(index);
 
+    _youtubePlayerController=YoutubePlayerController(initialVideoId:globalMovieTrailer.results![0].key!.toString()
+        ,flags: YoutubePlayerFlags(autoPlay: true,mute: false));
+    return _youtubePlayerController;
+  }
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   IconModels iconModels=IconModels();
   IconText iconText=IconText();
   IconTextColor iconTextColor=IconTextColor();
-
+  late YoutubePlayerController _youtubePlayerController;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -137,16 +143,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 index < snapshot.data.results.length-1?
                                                    GestureDetector(
                                                      onTap: () {
+                                                            setState((){
+                                                            getTrailerVideo(index);
+                                                            });
+
+
+
                                                        showModalBottomSheet<void>(
                                                          isScrollControlled: true,
                                                          context: context,
                                                          builder: (BuildContext context) {
+
                                                            return Container(
                                                              height: height*0.85,
                                                              color: Colors.amber,
-                                                             child: Center(
-                                                               child:
-                                                                   Expanded(child: YoutubePlayer(controller: _youtubePlayerController,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,))
+                                                             child: Center(child: YoutubePlayer(controller: _youtubePlayerController,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,)
 
 
                                                              ),
