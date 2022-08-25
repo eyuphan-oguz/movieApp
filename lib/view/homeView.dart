@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 SvgModels svgModels = SvgModels();
 IconModels iconModels = IconModels();
+int pageIndex=1;
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
@@ -59,7 +60,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       i++;
     }while(i<=populerMovieModel.results!.length);
   }
-
 
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                         SingleChildScrollView(
                           child: FutureBuilder<PopulerMovieModel>(
-                            future: fetchPopulerMoviesData(pageCount: 5),
+                            future: fetchPopulerMoviesData(pageCount: pageIndex),
                             builder:
                                 (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
@@ -131,17 +131,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             padding: EdgeInsets.zero,
                                             scrollDirection: Axis.horizontal,
                                               itemCount: snapshot.data.results.length,
-                                              itemBuilder: (BuildContext context, index) {
-                                                PopulerMovieModel project = snapshot.data;
-                                                print(project.results!.length);
-                                                  return Container(
+                                              itemBuilder: (BuildContext context, index)=>
+                                                index < snapshot.data.results.length-1?
+                                                   Container(
                                                     padding: EdgeInsets.only(right: 10.0),
                                                     child: ClipRRect(
                                                       borderRadius: BorderRadius.circular(8.0),
-                                                      child: Image.network("https://image.tmdb.org/t/p/original/${project.results![index].posterPath}",fit: BoxFit.fill),
+                                                      child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
                                                     ),
-                                                  );
-                                              }),
+                                                  ):TextButton.icon(onPressed: (){
+                                                    setState((){
+                                                      pageIndex++;
+                                                      print(pageIndex);
+                                                    });
+
+                                                },icon: Icon(Icons.zoom_in_map_outlined),label: Text("View More",style: TextStyle(color: Colors.white),),)
+                                              ),
                                       ),
                                     ),
 
