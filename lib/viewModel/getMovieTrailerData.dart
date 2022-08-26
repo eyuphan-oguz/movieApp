@@ -6,7 +6,9 @@ import 'package:movie/model/populerMovieModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movie/viewModel/getPopulerMovieData.dart';
 
-Future<MovieTrailerModel> fetchMoviesTrailerData(int index) async {
+
+
+Future<String> fetchMoviesTrailerData(int index) async {
 
   final response = await http
       .get(Uri.parse('https://api.themoviedb.org/3/movie/${globalPopulerMovieModel.results![index].id}/videos?api_key=${dotenv.env['API_KEY']}&language=en-US'));
@@ -15,7 +17,10 @@ Future<MovieTrailerModel> fetchMoviesTrailerData(int index) async {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     globalMovieTrailer=MovieTrailerModel.fromJson(jsonDecode(response.body));
-    return globalMovieTrailer;
+
+
+
+    return globalMovieTrailer.results![0].key.toString();
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.

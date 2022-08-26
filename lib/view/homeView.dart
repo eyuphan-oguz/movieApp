@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 0));
     _colorTween = ColorTween(
-            begin: Colors.transparent, end: Colors.black.withOpacity(0.8))
+        begin: Colors.transparent, end: Colors.black.withOpacity(0.8))
         .animate(_animationController);
     fetchGenresData();
     fetchPopulerMoviesData();
@@ -62,18 +62,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }while(i<=populerMovieModel.results!.length);
   }
 
-  getTrailerVideo(int index){
-    fetchMoviesTrailerData(index);
+   YoutubePlayerController? youtubePlayerController;
 
-    _youtubePlayerController=YoutubePlayerController(initialVideoId:globalMovieTrailer.results![0].key!.toString()
-        ,flags: YoutubePlayerFlags(autoPlay: true,mute: false));
-    return _youtubePlayerController;
+  getTrailerVideo(int index)async{
+     String key=await fetchMoviesTrailerData(index);
+      print("${key}");
+
+       youtubePlayerController=YoutubePlayerController(initialVideoId:  key
+       ,flags: YoutubePlayerFlags(autoPlay: true,mute: false));
+      return  youtubePlayerController;
   }
+
+
+
+
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   IconModels iconModels=IconModels();
   IconText iconText=IconText();
   IconTextColor iconTextColor=IconTextColor();
-  late YoutubePlayerController _youtubePlayerController;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -128,58 +135,57 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             builder: (BuildContext context, AsyncSnapshot snapshot) {
 
 
-                                  if (snapshot.hasData) {
+                              if (snapshot.hasData) {
                                 return Row(
                                   children: [
                                     Expanded(
                                       child: Container(
                                         height: height*0.3,
                                         child: ListView.builder(
-                                          shrinkWrap: true,
+                                            shrinkWrap: true,
                                             padding: EdgeInsets.zero,
                                             scrollDirection: Axis.horizontal,
-                                              itemCount: snapshot.data.results.length,
-                                              itemBuilder: (BuildContext context, index)=>
-                                                index < snapshot.data.results.length-1?
-                                                   GestureDetector(
-                                                     onTap: () {
-                                                            setState((){
-                                                            getTrailerVideo(index);
-                                                            });
+                                            itemCount: snapshot.data.results.length,
+                                            itemBuilder: (BuildContext context, index)=>
+                                            index+1 < snapshot.data.results.length && snapshot.data!=null?
+                                            InkWell(
+                                              onTap: ()  async{
+
+                                                 await getTrailerVideo(index);
 
 
 
-                                                       showModalBottomSheet<void>(
-                                                         isScrollControlled: true,
-                                                         context: context,
-                                                         builder: (BuildContext context) {
 
-                                                           return Container(
-                                                             height: height*0.85,
-                                                             color: Colors.amber,
-                                                             child: Center(child: YoutubePlayer(controller: _youtubePlayerController,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,)
+                                                showModalBottomSheet(
+                                                  isScrollControlled: true,
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return Container(
+                                                      height: height*0.85,
+                                                      color: Colors.amber,
+                                                      child: Center(child: YoutubePlayer(controller:  youtubePlayerController!,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,)
 
 
-                                                             ),
-                                                           );
-                                                         },
-                                                       );
-                                                     },
-                                                     child: Container(
-                                                      padding: EdgeInsets.only(right: 10.0),
-                                                      child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(8.0),
-                                                        child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
                                                       ),
-                                                  ),
-                                                   ):TextButton.icon(onPressed: (){
-                                                    setState((){
-                                                      pageIndex++;
-                                                      print(pageIndex);
-                                                    });
-
-                                                },icon: Icon(Icons.zoom_in_map_outlined),label: Text("View More",style: TextStyle(color: Colors.white),),)
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.only(right: 10.0),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                  child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
+                                                ),
                                               ),
+                                            ):TextButton.icon(onPressed: (){
+                                              setState((){
+                                                pageIndex++;
+                                                print(pageIndex);
+                                              });
+
+                                            },icon: Icon(Icons.zoom_in_map_outlined),label: Text("View More",style: TextStyle(color: Colors.white),),)
+                                        ),
                                       ),
                                     ),
 
@@ -217,5 +223,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 }
-
 
