@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:movie/components/appBarComponents.dart';
 import 'package:movie/model/genresModel.dart';
 import 'package:movie/model/populerMovieModel.dart';
@@ -22,7 +23,7 @@ class HomePage extends StatefulWidget {
 
 SvgModels svgModels = SvgModels();
 IconModels iconModels = IconModels();
-int pageIndex=1;
+int pageIndex = 1;
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 0));
     _colorTween = ColorTween(
-        begin: Colors.transparent, end: Colors.black.withOpacity(0.8))
+            begin: Colors.transparent, end: Colors.black.withOpacity(0.8))
         .animate(_animationController);
     fetchGenresData();
     fetchPopulerMoviesData();
@@ -49,38 +50,37 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return scroll;
   }
 
-  comediMovieList(PopulerMovieModel populerMovieModel,GenresModel genresModel){
-    int i=0;
+  comediMovieList(
+      PopulerMovieModel populerMovieModel, GenresModel genresModel) {
+    int i = 0;
 
-    do{
-      for(int j=0 ; j<populerMovieModel.results![i].genreIds!.length; j++){
-        if(populerMovieModel.results![i].genreIds![j]==genresModel.genres![0].id){
+    do {
+      for (int j = 0; j < populerMovieModel.results![i].genreIds!.length; j++) {
+        if (populerMovieModel.results![i].genreIds![j] ==
+            genresModel.genres![0].id) {
           print(populerMovieModel.results![i].title);
         }
       }
       i++;
-    }while(i<=populerMovieModel.results!.length);
+    } while (i <= populerMovieModel.results!.length);
   }
 
-   YoutubePlayerController? youtubePlayerController;
+  YoutubePlayerController? youtubePlayerController;
 
-  getTrailerVideo(int index)async{
-     String key=await fetchMoviesTrailerData(index);
-      print("${key}");
+  getTrailerVideo(int index) async {
+    String key = await fetchMoviesTrailerData(index);
+    print("${key}");
 
-       youtubePlayerController=YoutubePlayerController(initialVideoId:  key
-       ,flags: YoutubePlayerFlags(autoPlay: true,mute: false));
-      return  youtubePlayerController;
+    youtubePlayerController = YoutubePlayerController(
+        initialVideoId: key,
+        flags: YoutubePlayerFlags(autoPlay: true, mute: false));
+    return youtubePlayerController;
   }
-
-
-
-
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  IconModels iconModels=IconModels();
-  IconText iconText=IconText();
-  IconTextColor iconTextColor=IconTextColor();
+  IconModels iconModels = IconModels();
+  IconText iconText = IconText();
+  IconTextColor iconTextColor = IconTextColor();
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -125,73 +125,139 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                           ],
                         ),
-
-                        CustomRowIconsWidget(iconModels: iconModels, iconText: iconText, iconTextColor: iconTextColor),
-
-
+                        CustomRowIconsWidget(
+                            iconModels: iconModels,
+                            iconText: iconText,
+                            iconTextColor: iconTextColor),
                         SingleChildScrollView(
                           child: FutureBuilder<PopulerMovieModel>(
-                            future: fetchPopulerMoviesData(pageCount: pageIndex),
-                            builder: (BuildContext context, AsyncSnapshot snapshot) {
-
-
+                            future:
+                                fetchPopulerMoviesData(pageCount: pageIndex),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
                                 return Row(
                                   children: [
                                     Expanded(
                                       child: Container(
-                                        height: height*0.3,
+                                        height: height * 0.3,
                                         child: ListView.builder(
                                             shrinkWrap: true,
                                             padding: EdgeInsets.zero,
                                             scrollDirection: Axis.horizontal,
-                                            itemCount: snapshot.data.results.length,
-                                            itemBuilder: (BuildContext context, index)=>
-                                            index+1 < snapshot.data.results.length && snapshot.data!=null?
-                                            InkWell(
-                                              onTap: ()  async{
+                                            itemCount:
+                                                snapshot.data.results.length,
+                                            itemBuilder: (BuildContext context,
+                                                    index) =>
+                                                index + 1 <
+                                                            snapshot
+                                                                .data
+                                                                .results
+                                                                .length &&
+                                                        snapshot.data != null
+                                                    ? InkWell(
+                                                        onTap: () async {
+                                                          await getTrailerVideo(
+                                                              index);
 
-                                                 await getTrailerVideo(index);
-
-
-
-
-                                                showModalBottomSheet(
-                                                  isScrollControlled: true,
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return Container(
-                                                      height: height*0.85,
-                                                      color: Colors.amber,
-                                                      child: Center(child: YoutubePlayer(controller:  youtubePlayerController!,showVideoProgressIndicator: true,progressIndicatorColor: Colors.blue,)
-
-
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.only(right: 10.0),
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                  child: Image.network("https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",fit: BoxFit.fill),
-                                                ),
-                                              ),
-                                            ):TextButton.icon(onPressed: (){
-                                              setState((){
-                                                pageIndex++;
-                                                print(pageIndex);
-                                              });
-
-                                            },icon: Icon(Icons.zoom_in_map_outlined),label: Text("View More",style: TextStyle(color: Colors.white),),)
-                                        ),
+                                                          showModalBottomSheet(
+                                                            isScrollControlled: true,
+                                                            backgroundColor:(Colors.black),
+                                                            context: context,
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          20),
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          20)),
+                                                            ),
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return Container(
+                                                                  height:
+                                                                height *
+                                                                    0.80,
+                                                                  child: Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                Row(mainAxisAlignment: MainAxisAlignment.end,
+                                                                  children: [
+                                                                    IconButton(
+                                                                        onPressed: () {
+                                                                          Navigator.pop(context);
+                                                                        },
+                                                                        icon: Icon(Icons.cancel_outlined,color: Colors.white,)),
+                                                                  ],
+                                                                ),
+                                                                RatingBarIndicator(
+                                                                  rating: (globalPopulerMovieModel.results![index].voteAverage)!.toDouble()/2,
+                                                                  itemBuilder: (context, index) => Icon(
+                                                                    Icons.star,
+                                                                    color: Colors.amber,
+                                                                  ),
+                                                                  unratedColor:(Colors.white),
+                                                                  itemCount: 5,
+                                                                  itemSize: 50.0,
+                                                                  direction: Axis.horizontal,
+                                                                ),
+                                                                Center(
+                                                                    child:
+                                                                        YoutubePlayer(
+                                                                  controller:
+                                                                      youtubePlayerController!,
+                                                                  showVideoProgressIndicator:
+                                                                      true,
+                                                                  progressIndicatorColor:
+                                                                      Colors.blue,
+                                                                )),
+                                                                Text(globalPopulerMovieModel.results![index].overview.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                                                              ],
+                                                                  ),
+                                                                );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 10.0),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Image.network(
+                                                                "https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",
+                                                                fit: BoxFit
+                                                                    .fill),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : TextButton.icon(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            pageIndex++;
+                                                            print(pageIndex);
+                                                          });
+                                                        },
+                                                        icon: Icon(Icons
+                                                            .zoom_in_map_outlined),
+                                                        label: Text(
+                                                          "View More",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      )),
                                       ),
                                     ),
-
                                   ],
                                 );
-
                               } else if (snapshot.hasError) {
                                 return Text('${snapshot.error}');
                               }
@@ -200,17 +266,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             },
                           ),
                         ),
-
-
-
-
-
                       ],
                     )
                   ],
                 ),
-
-
                 CustomAppBar(
                   animationController: _animationController,
                   colorsTween: _colorTween,
@@ -223,4 +282,3 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 }
-
