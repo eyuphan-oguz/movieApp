@@ -182,39 +182,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                 height *
                                                                     0.80,
                                                                   child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
+
                                                               children: [
-                                                                Row(mainAxisAlignment: MainAxisAlignment.end,
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(top: 15.0),
+                                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    children: [
+                                                                      RatingBarIndicator(
+                                                                        rating: (globalPopulerMovieModel.results![index].voteAverage)!.toDouble()/2,
+                                                                        itemBuilder: (context, index) => Icon(
+                                                                          Icons.star,
+                                                                          color: Colors.amber,
+
+                                                                        ),
+                                                                        unratedColor:(Colors.white),
+                                                                        itemCount: 5,
+                                                                        itemSize: 20,
+                                                                        direction: Axis.horizontal,
+                                                                      ),
+
+                                                                      IconButton(
+                                                                          onPressed: () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          icon: Icon(Icons.cancel_outlined,color: Colors.white,size: 30,)),
+
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(height: height*0.06,),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
                                                                   children: [
-                                                                    IconButton(
-                                                                        onPressed: () {
-                                                                          Navigator.pop(context);
-                                                                        },
-                                                                        icon: Icon(Icons.cancel_outlined,color: Colors.white,)),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text("IMDB",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                        Text("${globalPopulerMovieModel.results![index].voteAverage.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                      ],
+                                                                    ),
+                                                                    VerticalDivider(color: Colors.red,),
+                                                                    //SizedBox(width: width*0.15,),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text("Release Date",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                        Text("${globalPopulerMovieModel.results![index].releaseDate.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                      ],
+                                                                    ),
                                                                   ],
                                                                 ),
-                                                                RatingBarIndicator(
-                                                                  rating: (globalPopulerMovieModel.results![index].voteAverage)!.toDouble()/2,
-                                                                  itemBuilder: (context, index) => Icon(
-                                                                    Icons.star,
-                                                                    color: Colors.amber,
-                                                                  ),
-                                                                  unratedColor:(Colors.white),
-                                                                  itemCount: 5,
-                                                                  itemSize: 50.0,
-                                                                  direction: Axis.horizontal,
-                                                                ),
-                                                                Center(
-                                                                    child:
-                                                                        YoutubePlayer(
+
+
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 25.0),
+                                                                          child: YoutubePlayer(
                                                                   controller:
                                                                       youtubePlayerController!,
                                                                   showVideoProgressIndicator:
                                                                       true,
                                                                   progressIndicatorColor:
                                                                       Colors.blue,
-                                                                )),
+                                                                ),
+                                                                        ),
+
                                                                 Text(globalPopulerMovieModel.results![index].overview.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                                                               ],
                                                                   ),
