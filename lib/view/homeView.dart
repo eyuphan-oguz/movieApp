@@ -177,77 +177,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             builder:
                                                                 (BuildContext
                                                                     context) {
-                                                              return Container(
-                                                                  height:
-                                                                height *
-                                                                    0.80,
-                                                                  child: Column(
+                                                              return Expanded(
+                                                                child: Container(
+                                                                    height:
+                                                                  height *
+                                                                      0.80,
+                                                                    child: Column(
 
-                                                              children: [
-                                                                Padding(
-                                                                  padding: const EdgeInsets.only(top: 15.0),
-                                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                    children: [
-                                                                      RatingBarIndicator(
-                                                                        rating: (globalPopulerMovieModel.results![index].voteAverage)!.toDouble()/2,
-                                                                        itemBuilder: (context, index) => Icon(
-                                                                          Icons.star,
-                                                                          color: Colors.amber,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(top: 15.0),
+                                                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                      children: [
+                                                                        RatingBarIndicator(
+                                                                          rating: (globalPopulerMovieModel.results![index].voteAverage)!.toDouble()/2,
+                                                                          itemBuilder: (context, index) => Icon(
+                                                                            Icons.star,
+                                                                            color: Colors.amber,
 
+                                                                          ),
+                                                                          unratedColor:(Colors.white),
+                                                                          itemCount: 5,
+                                                                          itemSize: 20,
+                                                                          direction: Axis.horizontal,
                                                                         ),
-                                                                        unratedColor:(Colors.white),
-                                                                        itemCount: 5,
-                                                                        itemSize: 20,
-                                                                        direction: Axis.horizontal,
+
+
+                                                                        IconButton(
+                                                                            onPressed: () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            icon: Icon(Icons.cancel_outlined,color: Colors.white,size: 30,)),
+
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: height*0.02,),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    children: [
+                                                                      Column(
+                                                                        children: [
+                                                                          Text("IMDB",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 25) ,),
+                                                                          Text("${globalPopulerMovieModel.results![index].voteAverage.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                        ],
                                                                       ),
-
-                                                                      IconButton(
-                                                                          onPressed: () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          icon: Icon(Icons.cancel_outlined,color: Colors.white,size: 30,)),
-
+                                                                      SizedBox(width: height*0.1,),
+                                                                      //SizedBox(width: width*0.15,),
+                                                                      Column(
+                                                                        children: [
+                                                                          Text("Release Date",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 25) ,),
+                                                                          Text("${globalPopulerMovieModel.results![index].releaseDate.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
+                                                                        ],
+                                                                      ),
                                                                     ],
                                                                   ),
-                                                                ),
-                                                                SizedBox(height: height*0.06,),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  children: [
-                                                                    Column(
-                                                                      children: [
-                                                                        Text("IMDB",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
-                                                                        Text("${globalPopulerMovieModel.results![index].voteAverage.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
-                                                                      ],
-                                                                    ),
-                                                                    VerticalDivider(color: Colors.red,),
-                                                                    //SizedBox(width: width*0.15,),
-                                                                    Column(
-                                                                      children: [
-                                                                        Text("Release Date",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
-                                                                        Text("${globalPopulerMovieModel.results![index].releaseDate.toString()}",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold) ,),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
 
 
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.symmetric(vertical: 25.0),
-                                                                          child: YoutubePlayer(
-                                                                  controller:
-                                                                      youtubePlayerController!,
-                                                                  showVideoProgressIndicator:
-                                                                      true,
-                                                                  progressIndicatorColor:
-                                                                      Colors.blue,
-                                                                ),
-                                                                        ),
-
-                                                                Text(globalPopulerMovieModel.results![index].overview.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-                                                              ],
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.symmetric(vertical: 25.0),
+                                                                            child: YoutubePlayer(
+                                                                    controller:
+                                                                        youtubePlayerController!,
+                                                                    showVideoProgressIndicator:
+                                                                        true,
+                                                                    progressIndicatorColor:
+                                                                        Colors.blue,
                                                                   ),
-                                                                );
+                                                                          ),
+
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                                    child: Text(globalPopulerMovieModel.results![index].overview.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500),),
+                                                                  ),
+                                                                ],
+                                                                    ),
+                                                                  ),
+                                                              );
                                                             },
                                                           );
                                                         },
