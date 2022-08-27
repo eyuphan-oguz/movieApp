@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:movie/components/appBarComponents.dart';
@@ -102,11 +103,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Stack(
                           children: [
                             Image.network(
-                              "https://image.tmdb.org/t/p/original//1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                              "https://image.tmdb.org/t/p/original/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
                               fit: BoxFit.fill,
                               height: MediaQuery.of(context).size.width * 1,
                               width: MediaQuery.of(context).size.width,
                             ),
+
+
                             Container(
                               height: MediaQuery.of(context).size.width * 1,
                               width: MediaQuery.of(context).size.width,
@@ -115,13 +118,71 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    const Color(0xAC000000),
+                                    const Color(0xAD000000),
                                     const Color(0x00000000),
                                     const Color(0x00000000),
                                     const Color(0xAC000000),
                                   ],
                                 ),
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(padding: EdgeInsets.only(top: 50),child: TextButton(onPressed: (){}, child: Text("Dizi",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),))),
+                                Padding(padding: EdgeInsets.only(top: 50),child: TextButton(onPressed: (){}, child: Text("Film",style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),))),
+                                Padding(padding: EdgeInsets.only(top: 50),child: TextButton.icon(onPressed: ()async{
+                                        await showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        //backgroundColor:(Colors.transparent),
+                                        context: context,
+                                        shape:
+                                        RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(20),
+                                        topLeft: Radius.circular(20)),
+                                        ),
+                                        builder: (BuildContextcontext) {
+                                          return BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 0.9, sigmaY: 0.9),
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  width: width*1,
+                                                  height: height*1,
+                                                  color: Colors.black.withOpacity(0.9),
+                                                  child: FutureBuilder<GenresModel>(
+                                                    future: fetchGenresData(),
+                                                    builder: (BuildContext context,AsyncSnapshot snapshot){
+                                                      if(snapshot.hasData){
+                                                        return ListView.builder(
+                                                            itemCount: globalGenresData.genres!.length,
+                                                            itemBuilder: (context,index){
+                                                             return  index + 1 <snapshot.data.results.length && snapshot.data != null ?
+                                                           TextButton(
+                                                              onPressed: (){
+                                                                print(globalGenresData.genres![index].name.toString());
+                                                              },
+                                                              child: Text(globalGenresData.genres![index].name.toString(),style: TextStyle(color: Colors.white,),)
+                                                           ):CircleAvatar(
+                                                               backgroundColor: Colors.white,
+                                                               radius: 30,
+                                                               child: Icon(Icons.close_rounded),
+                                                             );
+                                                        });
+                                                      }
+                                                      return CircularProgressIndicator();
+                                                    },
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          );
+                                        });
+
+                                }, icon: Icon(Icons.arrow_drop_down,color: Colors.white,size: 30),label: Text("Kategoriler",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),)),
+                              ],
                             ),
                           ],
                         ),
@@ -131,8 +192,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             iconTextColor: iconTextColor),
                         SingleChildScrollView(
                           child: FutureBuilder<PopulerMovieModel>(
-                            future:
-                                fetchPopulerMoviesData(pageCount: pageIndex),
+                            future: fetchPopulerMoviesData(pageCount: pageIndex),
                             builder:
                                 (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData) {
@@ -149,17 +209,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                 snapshot.data.results.length,
                                             itemBuilder: (BuildContext context,
                                                     index) =>
-                                                index + 1 <
-                                                            snapshot
-                                                                .data
-                                                                .results
-                                                                .length &&
-                                                        snapshot.data != null
+                                                index + 1 <snapshot.data.results.length && snapshot.data != null
                                                     ? InkWell(
                                                         onTap: () async {
-                                                          await getTrailerVideo(
-                                                              index);
-
+                                                          await getTrailerVideo(index);
                                                           showModalBottomSheet(
                                                             isScrollControlled: true,
                                                             backgroundColor:(Colors.black),
@@ -167,23 +220,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             shape:
                                                                 RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          20)),
+                                                                  topRight: Radius.circular(20),
+                                                                  topLeft: Radius.circular(20)),
                                                             ),
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
+                                                            builder: (BuildContextcontext) {
                                                               return Expanded(
-                                                                child: Container(
-                                                                    height:
-                                                                  height *
-                                                                      0.80,
-                                                                    child: Column(
-
+                                                                child: Container(height: height * 0.80, child: Column(
                                                                 children: [
                                                                   Padding(
                                                                     padding: const EdgeInsets.only(top: 15.0),
@@ -232,17 +274,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                                       ),
                                                                     ],
                                                                   ),
-
-
-                                                                          Padding(
-                                                                            padding: const EdgeInsets.symmetric(vertical: 25.0),
-                                                                            child: YoutubePlayer(
-                                                                    controller:
-                                                                        youtubePlayerController!,
-                                                                    showVideoProgressIndicator:
-                                                                        true,
-                                                                    progressIndicatorColor:
-                                                                        Colors.blue,
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                                                                    child: YoutubePlayer(
+                                                                    controller: youtubePlayerController!,
+                                                                    showVideoProgressIndicator: true,
+                                                                    progressIndicatorColor: Colors.blue,
                                                                   ),
                                                                           ),
 
@@ -257,19 +294,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             },
                                                           );
                                                         },
-                                                        child: Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  right: 10.0),
+                                                        child: Container(padding: EdgeInsets.only(right: 10.0),
                                                           child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0),
+                                                            borderRadius: BorderRadius.circular(8.0),
                                                             child: Image.network(
                                                                 "https://image.tmdb.org/t/p/original/${snapshot.data.results![index].posterPath}",
-                                                                fit: BoxFit
-                                                                    .fill),
+                                                                fit: BoxFit.fill),
                                                           ),
                                                         ),
                                                       )
@@ -280,13 +310,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                             print(pageIndex);
                                                           });
                                                         },
-                                                        icon: Icon(Icons
-                                                            .zoom_in_map_outlined),
-                                                        label: Text(
-                                                          "View More",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
+                                                        icon: Icon(Icons.zoom_in_map_outlined),
+                                                        label: Text("View More", style: TextStyle(color: Colors.white),
                                                         ),
                                                       )),
                                       ),
